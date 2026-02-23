@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Cloud Website</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- SVG filter: lavender/pink tint on cloud shading -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+      <filter id="cloud-tint" color-interpolation-filters="sRGB">
+        <!-- Contrast boost: pushes near-whites to full white, deepens shadows -->
+        <feComponentTransfer result="contrasted">
+          <feFuncR type="linear" slope="1.35" intercept="-0.14"/>
+          <feFuncG type="linear" slope="1.35" intercept="-0.14"/>
+          <feFuncB type="linear" slope="1.35" intercept="-0.14"/>
+        </feComponentTransfer>
+        <!-- Lavender/pink tint sits on the now-deeper shadow areas -->
+        <feColorMatrix type="matrix" in="contrasted"
+          values="0.97 0    0    0    0.03
+                  0    0.96 0    0    0.01
+                  0    0    0.98 0    0.04
+                  0    0    0    1    0"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- animated-cloud layer -->
+  <div id="sky"></div>
+
+  <!-- personal content layer -->
+  <section id="content">
+    <h1>libbie frost</h1>
+    <p class="bio">
+      currently i'm an investor at bessemer & live in nyc.<br />
+      generalist, multistage, excited about entirely new product experiences & bottoms-up distribution.<br /> 
+    </p>
+
+    <nav class="posts">
+      <a href="https://libbiefrostdesign.weebly.com/studio-art.html">artwork - enthusiast of shapes, vibrant colors, & scale</a>
+      <a href="https://docs.google.com/document/u/2/d/e/2PACX-1vTC82xpR-FTx9VLz0WmyQ1-TQmRNxQ2WXnXHIaz0VMUfkA_R1kuR4QDpi2cWK6SuL0ul6Dsoj8TbpfX/pub">ins & outs - things, month to month</a>
+      <a href="https://strava.app.link/vMPgNP1wBRb">strava - a world with more kudos is a better one</a>
+      <a href="https://www.instagram.com/libbiecheeseburger/">instagram - cheeseburgers only - always taking recs</a>
+      <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vQFJaFKkD_3VJ09s_VBBmbO2-gFChUgKGlHplge2dcUshpyChK8L546nCGv3kPkRUAuRmabzDdNN-nA/pub">florence recs - product of a cappuccino-fueled art history semester</a>
+    </nav>
+
+  <p class="social-links">
+  <a href="mailto:libbiefrost@gmail.com">email</a>
+  <span>-</span>
+  <a href="https://www.linkedin.com/in/libbie-frost-9a20b4195/" target="_blank">linkedin</a>
+  <span>-</span>
+  <a href="https://x.com/Libbiefrost" target="_blank">x</a>
+</p>
+
+  </section>
+
+  <!-- JS after all HTML -->
+  <script src="script.js"></script>
+</body>
+</html>

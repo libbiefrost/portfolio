@@ -1,0 +1,113 @@
+/* AGGRESSIVE reset to eliminate ALL browser defaults */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Create your sky background */
+#sky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-image: linear-gradient(to bottom, #1372e7 0%, #51a2ff 50%, #B6E3F4 100%);
+}
+
+@keyframes moveUp {
+    from {
+        transform: translateY(100vh); /* Start just below visible area */
+    }
+    to {
+        transform: translateY(-120vh); /* End well above visible area */
+    }
+}
+
+.cloud {
+    position: absolute;
+    bottom: 0;
+    animation: moveUp 20s linear forwards; /* 20 second duration */
+    filter: url(#cloud-tint);
+}
+
+/* Content styles */
+#content {
+    position: relative;
+    z-index: 10;
+    max-width: 500px;
+    margin: 10vh auto 5vh;
+    padding: 1.5rem 2.5rem;
+    text-align: center;
+    color: #fff;
+    font-family: 'Sometype Mono', monospace;
+    background: rgba(0, 68, 228, 0.25);
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+}
+
+#content h1 {
+    margin-bottom: 0.4rem;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+}
+
+.bio {
+    margin-bottom: 1.2rem;
+    line-height: 1.4;
+    font-size: .8rem;
+}
+
+.posts a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 2.8rem;
+    margin: 0.3rem 0;
+    padding: 0.35rem .7rem;
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 6px;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.25s, color 0.25s;
+}
+
+.posts a:hover {
+    background: #fff;
+    color: #1372e7;
+}
+/* small centred text links */
+.social-links {
+    margin-top: 1.2rem;          /* space above the row */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;                 /* even spacing around the "-" separators */
+    font-size: 0.8rem;          /* smaller text */
+}
+
+.social-links a {
+    color: #fff;
+    text-decoration: underline;
+    transition: color 0.25s;
+}
+
+.social-links a:hover {
+    color: #1372e7;              /* same blue as your hover effect */
+}
+
+.social-links span {             /* the "-" separators */
+    color: rgba(255,255,255,0.7);
+}
