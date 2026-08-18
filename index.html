@@ -1,63 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Cloud Website</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Libbie Frost</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --edge: 1.73vw;          /* left / top page inset */
+    --row: 1.2;              /* line height, ~20px rows */
+    --gap: 2.4em;            /* the "big spacing" between nav groups */
+    --sidebar: 17.1vw;       /* where the image begins */
+    --img-w: 59vw;           /* image width, as on the reference site */
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:#fff;
+    color:#000;
+  }
+
+  body{
+    font-family:"Nitti Grotesk","Karla",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    font-size:clamp(15px,1.62vw,21px);
+    line-height:var(--row);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  a{
+    color:inherit;
+    text-decoration:none;
+  }
+  a:hover{opacity:.45;}
+
+  /* ---------- sidebar ---------- */
+
+  nav{
+    position:fixed;
+    top:var(--edge);
+    left:var(--edge);
+    bottom:var(--edge);
+    width:calc(var(--sidebar) - var(--edge));
+    display:flex;
+    flex-direction:column;
+  }
+
+  nav ul{
+    list-style:none;
+    margin:0;
+    padding:0;
+  }
+
+  nav .group + .group{margin-top:var(--gap);}
+
+  .name{font-weight:700;}
+
+  nav .links{margin-top:auto;}
+
+  /* ---------- main image ---------- */
+
+  main{
+    padding:var(--edge) var(--edge) var(--edge) var(--sidebar);
+  }
+
+  main img{
+    display:block;
+    width:var(--img-w);
+    max-width:100%;
+    height:auto;
+  }
+
+  /* ---------- mobile ---------- */
+
+  @media (max-width:700px){
+    :root{--edge:18px;--sidebar:18px;--img-w:100%;}
+    body{font-size:17px;}
+    nav{
+      position:static;
+      width:auto;
+      padding:var(--edge) var(--edge) 0;
+    }
+    main{padding:var(--edge);}
+    nav .links{margin-top:var(--gap);}
+  }
+</style>
 </head>
-
 <body>
-  <!-- SVG filter: lavender/pink tint on cloud shading -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden">
-    <defs>
-      <filter id="cloud-tint" color-interpolation-filters="sRGB">
-        <!-- Contrast boost: pushes near-whites to full white, deepens shadows -->
-        <feComponentTransfer result="contrasted">
-          <feFuncR type="linear" slope="1.35" intercept="-0.14"/>
-          <feFuncG type="linear" slope="1.35" intercept="-0.14"/>
-          <feFuncB type="linear" slope="1.35" intercept="-0.14"/>
-        </feComponentTransfer>
-        <!-- Lavender/pink tint sits on the now-deeper shadow areas -->
-        <feColorMatrix type="matrix" in="contrasted"
-          values="0.97 0    0    0    0.03
-                  0    0.96 0    0    0.01
-                  0    0    0.98 0    0.04
-                  0    0    0    1    0"/>
-      </filter>
-    </defs>
-  </svg>
 
-  <!-- animated-cloud layer -->
-  <div id="sky"></div>
+<nav>
+  <div class="group">
+    <ul>
+      <li class="name"><a href="/">libbie frost</a></li>
+      <li><a href="#">about</a></li>
+    </ul>
+  </div>
 
-  <!-- personal content layer -->
-  <section id="content">
-    <h1>libbie frost</h1>
-    <p class="bio">
-      currently i'm an investor at bessemer & live in nyc.<br />
-      generalist, multistage, excited about entirely new product experiences & bottoms-up distribution.<br /> 
-    </p>
+  <div class="group">
+    <ul>
+      <li><a href="https://creativeconviction.ai" target="_blank" rel="noopener">creative conviction</a></li>
+      <li><a href="#">investing</a></li>
+      <li><a href="https://libbiefrost.github.io/art/" target="_blank" rel="noopener">artwork</a></li>
+      <li><a href="https://docs.google.com/document/u/1/d/e/2PACX-1vTC82xpR-FTx9VLz0WmyQ1-TQmRNxQ2WXnXHIaz0VMUfkA_R1kuR4QDpi2cWK6SuL0ul6Dsoj8TbpfX/pub" target="_blank" rel="noopener">ins &amp; outs</a></li>
+      <li><a href="https://www.strava.com/athletes/106295961" target="_blank" rel="noopener">strava</a></li>
+      <li><a href="https://www.instagram.com/libbiecheeseburger/" target="_blank" rel="noopener">cheeseburgers</a></li>
+    </ul>
+  </div>
 
-    <nav class="posts">
-      <a href="https://libbiefrost.github.io/art/">artwork - enthusiast of shapes, vibrant colors, & scale</a>
-      <a href="https://docs.google.com/document/u/2/d/e/2PACX-1vTC82xpR-FTx9VLz0WmyQ1-TQmRNxQ2WXnXHIaz0VMUfkA_R1kuR4QDpi2cWK6SuL0ul6Dsoj8TbpfX/pub">ins & outs - things, month to month</a>
-      <a href="https://strava.app.link/vMPgNP1wBRb">strava - a world with more kudos is a better one</a>
-      <a href="https://www.instagram.com/libbiecheeseburger/">instagram - cheeseburgers only - always taking recs</a>
-      <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vQFJaFKkD_3VJ09s_VBBmbO2-gFChUgKGlHplge2dcUshpyChK8L546nCGv3kPkRUAuRmabzDdNN-nA/pub">florence recs - product of a cappuccino-fueled art history semester</a>
-    </nav>
+  <div class="group links">
+    <ul>
+      <li><a href="https://x.com/Libbiefrost" target="_blank" rel="noopener">twitter</a></li>
+      <li><a href="https://www.linkedin.com/in/libbie-frost-9a20b4195/" target="_blank" rel="noopener">linkedin</a></li>
+      <li><a href="mailto:libbiefrost@gmail.com">email</a></li>
+    </ul>
+  </div>
+</nav>
 
-  <p class="social-links">
-  <a href="mailto:libbiefrost@gmail.com">email</a>
-  <span>-</span>
-  <a href="https://www.linkedin.com/in/libbie-frost-9a20b4195/" target="_blank">linkedin</a>
-  <span>-</span>
-  <a href="https://x.com/Libbiefrost" target="_blank">x</a>
-</p>
+<main>
+  <img src="libbie-frost-web.jpg" alt="Libbie Frost handwritten in blue brush lettering on a notepad">
+</main>
 
-  </section>
-
-  <!-- JS after all HTML -->
-  <script src="script.js"></script>
 </body>
 </html>
