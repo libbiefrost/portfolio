@@ -47,9 +47,16 @@
     left:var(--edge);
     bottom:var(--edge);
     width:calc(var(--sidebar) - var(--edge));
+    padding-right:1.6em;
     display:flex;
     flex-direction:column;
+    overflow-y:auto;
+    scrollbar-width:none;
   }
+  nav::-webkit-scrollbar{display:none;}
+
+  /* widen the column while the about note is open so the text stays readable */
+  html.about_open{--sidebar:max(340px,28vw);--gap:1.5em;}
 
   nav ul{
     list-style:none;
@@ -62,6 +69,40 @@
   .name{font-weight:700;}
 
   nav .links{margin-top:auto;}
+
+  /* ---------- about toggle ---------- */
+
+  #about summary{
+    cursor:pointer;
+    list-style:none;
+    display:inline-block;
+  }
+  #about summary::-webkit-details-marker{display:none;}
+  #about summary::marker{content:"";}
+  #about summary:hover{opacity:.45;}
+
+  .about_body{
+    margin:.55em 0 0;
+    padding:0 0 0 1.1em;
+    list-style:none;
+    color:#8f8f8f;
+    font-size:.8em;
+    line-height:1.35;
+    max-width:38ch;
+  }
+  .about_body li{
+    position:relative;
+    margin-bottom:.45em;
+  }
+  .about_body li::before{
+    content:"•";
+    position:absolute;
+    left:-1.1em;
+  }
+  .about_body li:last-child{
+    margin-top:.9em;
+    margin-bottom:0;
+  }
 
   /* ---------- main image ---------- */
 
@@ -88,6 +129,8 @@
     }
     main{padding:var(--edge);}
     nav .links{margin-top:var(--gap);}
+    html.about_open{--sidebar:18px;}
+    .about_body{max-width:none;}
   }
 </style>
 </head>
@@ -97,14 +140,25 @@
   <div class="group">
     <ul>
       <li class="name"><a href="/">libbie frost</a></li>
-      <li><a href="#">about</a></li>
+      <li>
+        <details id="about">
+          <summary>about</summary>
+          <ul class="about_body">
+            <li>Currently an investor at Bessemer Venture Partners in nyc</li>
+            <li>However the title &ldquo;investor&rdquo; feels lofty &mdash; I think of myself more as a matchmaker, a beta tester, an occasional BDR&hellip; a tinkerer, a brainstormer, a journalist&hellip; and most importantly, a friend</li>
+            <li>From Rockford, Illinois</li>
+            <li>I value craft and silliness, ambition and generosity, transparency and surprise, collaboration and independence, earth and technology, and the way opposites hold each other together</li>
+            <li>Spirit animal: black bear</li>
+          </ul>
+        </details>
+      </li>
     </ul>
   </div>
 
   <div class="group">
     <ul>
       <li><a href="https://creativeconviction.ai" target="_blank" rel="noopener">creative conviction</a></li>
-      <li><a href="#">investing</a></li>
+      <li><a href="https://www.bvp.com/team/libbie-frost" target="_blank" rel="noopener">investing</a></li>
       <li><a href="https://libbiefrost.github.io/art/" target="_blank" rel="noopener">artwork</a></li>
       <li><a href="https://docs.google.com/document/u/1/d/e/2PACX-1vTC82xpR-FTx9VLz0WmyQ1-TQmRNxQ2WXnXHIaz0VMUfkA_R1kuR4QDpi2cWK6SuL0ul6Dsoj8TbpfX/pub" target="_blank" rel="noopener">ins &amp; outs</a></li>
       <li><a href="https://www.strava.com/athletes/106295961" target="_blank" rel="noopener">strava</a></li>
@@ -124,6 +178,14 @@
 <main>
   <img src="libbie-frost-web.jpg" alt="Libbie Frost handwritten in blue brush lettering on a notepad">
 </main>
+
+<script>
+  // widen the left column only while the about note is open
+  var about = document.getElementById('about');
+  about.addEventListener('toggle', function(){
+    document.documentElement.classList.toggle('about_open', about.open);
+  });
+</script>
 
 </body>
 </html>
