@@ -55,8 +55,6 @@
   }
   nav::-webkit-scrollbar{display:none;}
 
-  /* widen the column while the about note is open so the text stays readable */
-  html.about_open{--sidebar:max(340px,28vw);--gap:1.5em;}
 
   nav ul{
     list-style:none;
@@ -129,7 +127,6 @@
     }
     main{padding:var(--edge);}
     nav .links{margin-top:var(--gap);}
-    html.about_open{--sidebar:18px;}
     .about_body{max-width:none;}
   }
 </style>
@@ -144,10 +141,7 @@
         <details id="about">
           <summary>about</summary>
           <ul class="about_body">
-            <li>currently an investor at Bessemer Venture Partners in nyc</li>
-            <li>the title &ldquo;investor&rdquo; feels funny sometimes. I think of myself more as a matchmaker, a beta tester, an occasional BDR&hellip; a tinkerer, a brainstormer, a journalist&hellip; and a friend!</li>
-            <li>grew up in rockford, illinois. went to notre dame for college. majored in finance and industrial design.</li>
-            <li>i value craft and silliness, ambition and generosity, transparency and surprise, collaboration and independence, earth and technology, and the way opposites hold each other together</li>
+            <li>investor at bessemer venture partners in nyc</li>
             <li>spirit animal: black bear</li>
           </ul>
         </details>
@@ -178,14 +172,6 @@
 <main>
   <img src="libbie-frost-web.jpg" alt="Libbie Frost handwritten in blue brush lettering on a notepad">
 </main>
-
-<script>
-  // widen the left column only while the about note is open
-  var about = document.getElementById('about');
-  about.addEventListener('toggle', function(){
-    document.documentElement.classList.toggle('about_open', about.open);
-  });
-</script>
 
 </body>
 </html>
