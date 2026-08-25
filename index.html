@@ -47,7 +47,7 @@
     left:var(--edge);
     bottom:var(--edge);
     width:calc(var(--sidebar) - var(--edge));
-    padding-right:1.6em;
+    padding-right:.5em;
     display:flex;
     flex-direction:column;
     overflow-y:auto;
@@ -108,11 +108,28 @@
     padding:var(--edge) var(--edge) var(--edge) var(--sidebar);
   }
 
-  main img{
-    display:block;
+  .frame{
+    position:relative;
+    display:inline-block;
     width:var(--img-w);
     max-width:100%;
+    line-height:0;
+    cursor:crosshair;
+  }
+
+  .frame img{
+    display:block;
+    width:100%;
     height:auto;
+  }
+
+  /* the pixel blocks get painted onto this layer, on top of the photo */
+  #px{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
   }
 
   /* ---------- mobile ---------- */
@@ -170,8 +187,112 @@
 </nav>
 
 <main>
-  <img src="libbie-frost-web.jpg" alt="Libbie Frost handwritten in blue brush lettering on a notepad">
+  <div class="frame">
+    <img id="photo" src="libbie-frost-web.jpg" alt="Libbie Frost handwritten in blue brush lettering on a notepad">
+    <canvas id="px" aria-hidden="true"></canvas>
+  </div>
 </main>
+
+<script>
+(function(){
+  var img = document.getElementById('photo');
+  var frame = document.querySelector('.frame');
+  var cv = document.getElementById('px');
+  if(!cv.getContext) return;
+  var ctx = cv.getContext('2d');
+
+  // offscreen low-res copy of the photo, one pixel per block
+  var small = document.createElement('canvas');
+  var sctx = small.getContext('2d', {willReadFrequently:true});
+
+  var block = 12, cols = 0, rows = 0, W = 0, H = 0, data = null;
+  var painted = Object.create(null);
+  var BRUSH = 2;              // brush radius, measured in blocks
+  var lastX = null, lastY = null;
+
+  function build(){
+    var r = img.getBoundingClientRect();
+    if(!r.width || !img.naturalWidth) return false;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    block = Math.max(10, Math.round(W / 50));
+    cols = Math.ceil(W / block);
+    rows = Math.ceil(H / block);
+    small.width = cols; small.height = rows;
+    sctx.clearRect(0, 0, cols, rows);
+    sctx.drawImage(img, 0, 0, cols, rows);
+    try{ data = sctx.getImageData(0, 0, cols, rows).data; }
+    catch(e){ data = null; return false; }
+    painted = Object.create(null);
+    return true;
+  }
+
+  // flatten each channel to a coarser palette so blocks read as pixel art
+  // even across the flat parts of the photo
+  var STEP = 26;
+  function q(v){
+    var out = Math.round(v / STEP) * STEP;
+    return out > 255 ? 255 : out;
+  }
+
+  function cell(cx, cy){
+    if(cx < 0 || cy < 0 || cx >= cols || cy >= rows) return;
+    var key = cx + ',' + cy;
+    if(painted[key]) return;
+    painted[key] = 1;
+    var i = (cy * cols + cx) * 4;
+    ctx.fillStyle = 'rgb(' + q(data[i]) + ',' + q(data[i+1]) + ',' + q(data[i+2]) + ')';
+    ctx.fillRect(cx * block, cy * block, block, block);
+  }
+
+  function stamp(x, y){
+    var cx = Math.floor(x / block), cy = Math.floor(y / block);
+    for(var dx = -BRUSH; dx <= BRUSH; dx++){
+      for(var dy = -BRUSH; dy <= BRUSH; dy++){
+        if(dx*dx + dy*dy <= BRUSH*BRUSH + BRUSH) cell(cx + dx, cy + dy);
+      }
+    }
+  }
+
+  function paint(e){
+    if(!data && !build()) return;
+    var r = frame.getBoundingClientRect();
+    var x = e.clientX - r.left, y = e.clientY - r.top;
+    // fill in the gaps between mouse samples so fast strokes stay continuous
+    if(lastX !== null){
+      var steps = Math.ceil(Math.max(Math.abs(x - lastX), Math.abs(y - lastY)) / block);
+      for(var s = 1; s < steps; s++){
+        stamp(lastX + (x - lastX) * s / steps, lastY + (y - lastY) * s / steps);
+      }
+    }
+    stamp(x, y);
+    lastX = x; lastY = y;
+  }
+
+  frame.addEventListener('pointermove', paint);
+  frame.addEventListener('pointerdown', paint);
+  frame.addEventListener('pointerleave', function(){ lastX = lastY = null; });
+
+  // double click anywhere on the photo wipes it back to clean
+  frame.addEventListener('dblclick', function(){
+    ctx.clearRect(0, 0, W, H);
+    painted = Object.create(null);
+  });
+
+  if(img.complete) build(); else img.addEventListener('load', build);
+
+  var t;
+  window.addEventListener('resize', function(){
+    clearTimeout(t);
+    t = setTimeout(build, 150);
+  });
+})();
+</script>
 
 </body>
 </html>
