@@ -177,7 +177,7 @@
     var w = pool.naturalWidth * k, h = pool.naturalHeight * k;
     sctx.clearRect(0, 0, cols, rows);
     sctx.imageSmoothingQuality = 'high';
-    sctx.filter = 'saturate(1.7) contrast(1.2)';   // keeps the pool blue once the lines are averaged into blocks
+    sctx.filter = 'hue-rotate(28deg) saturate(1.6) contrast(1.2)';   // cooler, to sit with the sketchbook's blues once the lines are averaged into blocks
     sctx.drawImage(pool, (cols - w) / 2, (rows - h) / 2, w, h);
     sctx.filter = 'none';
     try{ data = sctx.getImageData(0, 0, cols, rows).data; }catch(e){ data = null; }
