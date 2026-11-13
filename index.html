@@ -157,23 +157,30 @@
   if(!cv.getContext) return;
   var ctx = cv.getContext('2d');
 
-  // the pool artwork covers the photo; the brush scratches it away block by block, and the photo shows through
+  // the photo stays as it is; the brush paints the pool artwork over it, pixelated into blocks
   var pool = new Image();
   pool.src = 'pool.jpg';
 
-  var block = 12, cols = 0, rows = 0, W = 0, H = 0;
+  // offscreen low-res copy of the pool, one pixel per block, cropped to fill the frame
+  var small = document.createElement('canvas');
+  var sctx = small.getContext('2d', {willReadFrequently:true});
+
+  var block = 12, cols = 0, rows = 0, W = 0, H = 0, data = null;
   var painted = Object.create(null);
   var BRUSH = 2;              // brush radius, measured in blocks
   var lastX = null, lastY = null;
 
-  // lay the pool over the whole frame, cropped to fill (same proportions as the photo, so it barely crops)
-  function cover(){
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.clearRect(0, 0, W, H);
-    if(!pool.complete || !pool.naturalWidth) return;
-    var k = Math.max(W / pool.naturalWidth, H / pool.naturalHeight);
+  function sample(){
+    data = null;
+    if(!cols || !pool.complete || !pool.naturalWidth) return;
+    var k = Math.max(cols / pool.naturalWidth, rows / pool.naturalHeight);
     var w = pool.naturalWidth * k, h = pool.naturalHeight * k;
-    ctx.drawImage(pool, (W - w) / 2, (H - h) / 2, w, h);
+    sctx.clearRect(0, 0, cols, rows);
+    sctx.imageSmoothingQuality = 'high';
+    sctx.filter = 'saturate(1.7) contrast(1.2)';   // keeps the pool blue once the lines are averaged into blocks
+    sctx.drawImage(pool, (cols - w) / 2, (rows - h) / 2, w, h);
+    sctx.filter = 'none';
+    try{ data = sctx.getImageData(0, 0, cols, rows).data; }catch(e){ data = null; }
   }
 
   function build(){
@@ -184,21 +191,32 @@
     cv.width = Math.round(W * dpr);
     cv.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
 
     block = Math.max(10, Math.round(W / 50));
     cols = Math.ceil(W / block);
     rows = Math.ceil(H / block);
+    small.width = cols; small.height = rows;
     painted = Object.create(null);
-    cover();
+    sample();
     return true;
   }
 
+  // flatten each channel to a coarser palette so the blocks read as pixel art
+  var STEP = 20;
+  function q(v){
+    var out = Math.round(v / STEP) * STEP;
+    return out > 255 ? 255 : out;
+  }
+
   function cell(cx, cy){
-    if(cx < 0 || cy < 0 || cx >= cols || cy >= rows) return;
+    if(cx < 0 || cy < 0 || cx >= cols || cy >= rows || !data) return;
     var key = cx + ',' + cy;
     if(painted[key]) return;
     painted[key] = 1;
-    ctx.clearRect(cx * block, cy * block, block, block);
+    var i = (cy * cols + cx) * 4;
+    ctx.fillStyle = 'rgb(' + q(data[i]) + ',' + q(data[i+1]) + ',' + q(data[i+2]) + ')';
+    ctx.fillRect(cx * block, cy * block, block, block);
   }
 
   function stamp(x, y){
@@ -229,14 +247,14 @@
   frame.addEventListener('pointerdown', paint);
   frame.addEventListener('pointerleave', function(){ lastX = lastY = null; });
 
-  // double click anywhere on the photo puts the pool back
+  // double click anywhere on the photo wipes it back to the photo
   frame.addEventListener('dblclick', function(){
+    ctx.clearRect(0, 0, W, H);
     painted = Object.create(null);
-    cover();
   });
 
   if(img.complete) build(); else img.addEventListener('load', build);
-  pool.addEventListener('load', function(){ if(W) cover(); });
+  pool.addEventListener('load', sample);
 
   var t;
   window.addEventListener('resize', function(){
